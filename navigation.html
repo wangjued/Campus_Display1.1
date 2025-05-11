@@ -1,0 +1,151 @@
+<!-- 路径规划 -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <title>路线规划</title>
+    <style type="text/css">
+        html,
+        body,
+        #container {
+            width: 100%;
+            height: 100%;
+        }
+        #panel {
+            position: fixed;
+            background-color: white;
+            max-height: 30%;
+            overflow-y: auto;
+            bottom: 10px;
+            right: 10px;
+            width: 280px;
+        }
+        #panel .amap-call {
+            background-color: rgb(35, 48, 81);
+        }
+        #panel .amap-lib-walking {
+            overflow: hidden;
+        }
+        .input-container {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 100;
+            width: 260px;
+            background: white;
+            padding: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px; /* 添加间隙以分隔输入框和按钮 */
+        }
+        .input-container input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 0; /* 移除底部边距 */
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        .input-container button {
+            width: 100%;
+            padding: 8px;
+            background-color: rgb(35, 48, 81);
+            color: #eee;
+            border: none;
+            cursor: pointer;
+            box-sizing: border-box;
+        }
+        .input-container button:hover {
+            background-color: rgb(25, 38, 71);
+            color: #fff;
+        }
+        .amap-sug-result {
+            z-index: 9999 !important;  /* 提升层级 */
+            width: 280px !important;   /* 匹配输入框宽度 */
+            left: 10px !important;     /* 对齐输入框位置 */
+            top: 50px !important;      /* 下移避开输入框 */
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+        body {
+            overflow-x: hidden;
+            overflow-y: hidden;
+        }
+        * {
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+<div id="container"></div>
+<div id="panel"></div>
+<div class="input-container">
+    <input type="text" id="start" placeholder="起点地点（如：清泽园）">
+    <input type="text" id="end" placeholder="终点地点（如：图书馆）">
+    <button id="search-btn">开始导航</button>
+</div>
+<script>
+    // 配置安全密钥
+    window._AMapSecurityConfig = {
+        securityJsCode: "e612f76eddbc6dcc012338fc40134a10"
+    };
+</script>
+<script type="text/javascript" src="https://webapi.amap.com/maps?v=2.0&key=889b5bab9009715fb767c640a4c59fd7&plugin=AMap.Walking,AMap.Autocomplete,AMap.PlaceSearch"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 初始化地图
+        var map = new AMap.Map("container", {
+            resizeEnable: true,
+            center: [112.522223, 37.861356], // 地图中心点
+            zoom: 17 // 地图显示的缩放级别
+        });
+        // 初始化步行导航插件
+        var walking = new AMap.Walking({
+            map: map,
+            panel: "panel"
+        }); 
+        // 地点搜索服务
+        var placeSearch = new AMap.PlaceSearch({
+            map: map
+        });
+        // 根据起终点地点关键字规划步行路线
+        document.getElementById('search-btn').addEventListener('click', function() {
+            var start = document.getElementById('start').value;
+            var end = document.getElementById('end').value;
+            if (!start || !end) {
+                alert('请输入起点和终点！');
+                return;
+            }
+            // 清除之前的路线
+            walking.clear();
+            // 根据地点关键字搜索起点和终点的坐标
+            placeSearch.search(start, function(status, result) {
+                if (status === 'complete' && result.info === 'OK') {
+                    var startLngLat = result.poiList.pois[0].location;
+                    placeSearch.search(end, function(status, result) {
+                        if (status === 'complete' && result.info === 'OK') {
+                            var endLngLat = result.poiList.pois[0].location;
+                            // 进行步行路线规划
+                            walking.search(startLngLat, endLngLat, function(status, result) {
+                                if (status === 'complete') {
+                                    console.log('绘制步行路线完成');
+                                } else {
+                                    console.error('步行路线数据查询失败: ' + result);
+                                    alert('步行路线数据查询失败，请检查输入的地点是否正确。');
+                                }
+                            });
+                        } else {
+                            alert('未能找到终点：' + end);
+                        }
+                    });
+                } else {
+                    alert('未能找到起点：' + start);
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

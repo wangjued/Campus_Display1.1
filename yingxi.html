@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>地点查询</title>
+    <style>
+      html,
+      body,
+      #container {
+        width: 100%;
+        height: 100%;
+      }
+      .panorama-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .building-marker {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        background-color: rgba(255, 0, 0, 0.7);
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 10;
+      }
+
+      .building-marker:hover {
+        background-color: rgba(255, 0, 0, 1);
+        transform: scale(1.2);
+      }
+
+      .building-info {
+        position: absolute;
+        background-color: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 8px 12px;
+        border-radius: 4px;
+        font-size: 12px;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.3s;
+        white-space: nowrap;
+        z-index: 11;
+      }
+
+      .building-marker:hover .building-info {
+        opacity: 1;
+      }
+
+      #search-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+      }
+
+      .flex {
+        display: flex;
+      }
+
+      .justify-center {
+        justify-content: center;
+      }
+
+      .mt-24 {
+        margin-top: 24px;
+      }
+
+      #searchInput {
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        font-size: 16px;
+        width: 300px;
+      }
+
+      #searchButton {
+        padding: 10px 20px;
+        background-color: rgb(35, 48, 81);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        margin-left: 10px;
+      }
+
+      #searchButton:hover {
+        background-color: rgb(25, 38, 71);
+      }
+
+      .highlighted {
+        background-color: rgb(225, 255, 0);
+      }
+      body {
+        overflow-x: hidden;
+        overflow-y: hidden;
+      }
+    </style>
+  </head>
+  <body class="font-sans antialiased">
+    <div class="panorama-container">
+      <img
+        src="./素材/照片/迎西全景.jpg"
+        alt="太原理工大学全景"
+        class="panorama-image"
+      />
+
+      <!-- 建筑标记 -->
+      <div
+        class="building-marker"
+        style="top: 57%; left: 50.2%"
+        data-building-id="admin-building"
+      >
+        <span class="building-info">行政楼</span>
+      </div>
+      <div
+        class="building-marker"
+        style="top: 22%; left: 49.3%"
+        data-building-id="library"
+      >
+        <span class="building-info">图书馆</span>
+      </div>
+      <div
+        class="building-marker"
+        style="top: 20%; left: 44%"
+        data-building-id="canteen1"
+      >
+        <span class="building-info">智林餐厅</span>
+      </div>
+      <div
+        class="building-marker"
+        style="top: 19%; left: 53.8%"
+        data-building-id="canteen2"
+      >
+        <span class="building-info">清泽餐厅</span>
+      </div>
+      <div
+        class="building-marker"
+        style="top: 42%; left: 50%"
+        data-building-id="park"
+      >
+        <span class="building-info">清泽园</span>
+      </div>
+      <div
+        class="building-marker"
+        style="top: 20.5%; left: 34%"
+        data-building-id="playground"
+      >
+        <span class="building-info">操场</span>
+      </div>
+      <div
+        class="building-marker"
+        style="top: 25%; left: 30%"
+        data-building-id="teaching-building"
+      >
+        <span class="building-info">思韵楼</span>
+      </div>
+      <div
+        class="building-marker"
+        style="top: 36%; left: 27%"
+        data-building-id="mechanical-building"
+      >
+        <span class="building-info">机械馆</span>
+      </div>
+      <div
+        class="building-marker"
+        style="top: 96%; left: 51%"
+        data-building-id="south-gate"
+      >
+        <span class="building-info">南门</span>
+      </div>
+      <div
+        class="building-marker"
+        style="top: 58%; left: 15%"
+        data-building-id="water-building"
+      >
+        <span class="building-info">水利馆</span>
+      </div>
+      <div
+        class="building-marker"
+        style="top: 60%; left: 70%"
+        data-building-id="chemical-building"
+      >
+        <span class="building-info">化工学院</span>
+      </div>
+      <div
+        class="building-marker"
+        style="top: 14.5%; left: 16.5%"
+        data-building-id="yi-fu-building"
+      >
+        <span class="building-info">逸夫楼</span>
+      </div>
+      <div
+        class="building-marker"
+        style="top: 16%; left: 23%"
+        data-building-id="gymnasium"
+      >
+        <span class="building-info">体育馆</span>
+      </div>
+      <div
+        class="building-marker"
+        style="top: 22%; left: 63%"
+        data-building-id="bo-xue-building"
+      >
+        <span class="building-info">博学楼</span>
+      </div>
+      <div
+        class="building-marker"
+        style="top: 12%; left: 63%"
+        data-building-id="dormitory"
+      >
+        <span class="building-info">宿舍区</span>
+      </div>
+      <div
+        class="building-marker"
+        style="top: 73%; left: 77%"
+        data-building-id="chemical-building2"
+      >
+        <span class="building-info">化工楼</span>
+      </div>
+      <div
+        class="building-marker"
+        style="top: 75%; left: 23%"
+        data-building-id="materials-building"
+      >
+        <span class="building-info">材料馆</span>
+      </div>
+      <div
+        class="building-marker"
+        style="top: 31%; left: 5%"
+        data-building-id="si-xian-building"
+      >
+        <span class="building-info">思贤楼</span>
+      </div>
+      <div
+        class="building-marker"
+        style="top: 35%; left: 68%"
+        data-building-id="dian-ji-building"
+      >
+        <span class="building-info">电机馆</span>
+      </div>
+    </div>
+
+    <!-- 搜索部分 -->
+    <div id="search-container">
+      <div class="flex justify-center mt-24">
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="输入建筑名称"
+          class="p-2 border"
+        />
+        <button id="searchButton" class="px-4 py-2 ml-2 text-white">
+          搜索
+        </button>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const searchInput = document.getElementById("searchInput");
+        const searchButton = document.getElementById("searchButton");
+        const buildingMarkers = document.querySelectorAll(".building-marker");
+
+        // 建筑名称映射表
+        const buildingNames = {
+          "admin-building": "行政楼",
+          library: "图书馆",
+          canteen1: "智林餐厅",
+          canteen2: "清泽餐厅",
+          park: "清泽园",
+          playground: "操场",
+          "teaching-building": "思韵楼",
+          "mechanical-building": "机械馆",
+          "south-gate": "南门",
+          "water-building": "水利馆",
+          "chemical-building": "化工学院",
+          "yi-fu-building": "逸夫楼",
+          gymnasium: "体育馆",
+          "bo-xue-building": "博学楼",
+          dormitory: "宿舍区",
+          "chemical-building2": "化工楼",
+          "materials-building": "材料馆",
+          "si-xian-building": "思贤楼",
+          "dian-ji-building": "电机馆",
+        };
+
+        // 搜索框点击事件
+        searchButton.addEventListener("click", performSearch);
+
+        // 回车键搜索
+        searchInput.addEventListener("keyup", function (event) {
+          if (event.key === "Enter") {
+            performSearch();
+          }
+        });
+
+        function performSearch() {
+          const searchTerm = searchInput.value.trim();
+
+          if (searchTerm === "") {
+            // 清除所有高亮
+            buildingMarkers.forEach((marker) => {
+              marker.classList.remove("highlighted");
+            });
+            return;
+          }
+
+          // 搜索框标记
+          buildingMarkers.forEach((marker) => {
+            const buildingId = marker.getAttribute("data-building-id");
+            const buildingName = buildingNames[buildingId];
+
+            if (buildingName.includes(searchTerm)) {
+              marker.classList.add("highlighted");
+            } else {
+              marker.classList.remove("highlighted");
+            }
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

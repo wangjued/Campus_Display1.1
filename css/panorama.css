@@ -1,0 +1,43 @@
+/* panorama.css */
+.panorama-container {
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+    margin-top: 20px;
+}
+#model-viewer {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+#controls {
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    bottom: 40px;
+    left: 0;
+    right: 0;
+    padding: 0 20px;
+    z-index: 10;
+}
+button {
+    background-color: rgb(35, 48, 81);
+    color: #eee;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 10px;
+}
+input{
+    border-radius: 10px;
+}
+button:hover {
+    background-color: rgb(25, 38, 71);
+    color: #fff;
+}
+.nav-color {
+    background-color: transparent;
+}
+.nav-color:hover {
+    background-color: rgb(35, 48, 81);
+}

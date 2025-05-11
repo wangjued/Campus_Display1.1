@@ -1,0 +1,53 @@
+/* index.css */
+/*侧边栏*/
+.r_xnav {
+    float: right;
+    position: fixed;
+    top: 25%;
+    right: 0;
+    width: 200px;
+    height: auto;
+    border-left: 2px solid #ddd;
+    opacity: 0;
+    visibility: hidden;
+    align-items: center;
+}
+.rnav li {
+    cursor: pointer;
+    text-align: left;
+    height: 45px;
+    padding-left: 10px;
+    position: relative; 
+}
+.rnav li a {
+    width: 100%;
+    height: 100%;
+    display: block;
+    text-decoration: none;
+    margin-left: 10px;
+}
+/* 悬浮时的样式 */
+.rnav li:hover {
+    color: #2563eb; 
+}
+.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.rnav li.active a {
+    color: #2563eb; 
+}
+/*二维码悬浮*/
+.qrcode {
+    position: relative;
+}
+.qrcode .hidden-qrcode {
+    position: absolute;
+    bottom: 60px;
+    left: 17px;
+    transform: scale(0);
+}
+.qrcode:hover .hidden-qrcode {
+    transform: scale(1.7);
+}
