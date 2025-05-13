@@ -90,7 +90,7 @@
 }
 /*背景*/
 .backdrop {
-    background-image: url('/素材/照片/明向.jpg');
+    background-image: url('../素材/照片/明向.jpg');
     background-size: cover;
     background-position: center;
     height: 700px;
