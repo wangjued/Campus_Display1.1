@@ -16,12 +16,11 @@
         height: 100%;
         object-fit: cover;
       }
-
       .building-marker {
         position: absolute;
         width: 10px;
         height: 10px;
-        background-color: rgba(255, 0, 0, 0.7);
+        background-color: rgb(255, 0, 0);
         border-radius: 50%;
         cursor: pointer;
         display: flex;
@@ -29,30 +28,22 @@
         align-items: center;
         z-index: 10;
       }
-
-      .building-marker:hover {
-        background-color: rgba(255, 0, 0, 1);
-        transform: scale(1.2);
-      }
-
       .building-info {
         position: absolute;
         background-color: rgba(0, 0, 0, 0.7);
         color: white;
-        padding: 8px 12px;
-        border-radius: 4px;
-        font-size: 12px;
+        padding: 10px 14px;
+        border-radius: 10px;
+        font-size: 16px;
         pointer-events: none;
         opacity: 0;
         transition: opacity 0.3s;
         white-space: nowrap;
         z-index: 11;
       }
-
       .building-marker:hover .building-info {
         opacity: 1;
       }
-
       #search-container {
         position: fixed;
         top: 0;
@@ -60,19 +51,15 @@
         right: 0;
         z-index: 100;
       }
-
       .flex {
         display: flex;
       }
-
       .justify-center {
         justify-content: center;
       }
-
       .mt-24 {
         margin-top: 24px;
       }
-
       #searchInput {
         padding: 10px;
         border: 1px solid #ccc;
@@ -80,7 +67,6 @@
         font-size: 16px;
         width: 300px;
       }
-
       #searchButton {
         padding: 10px 20px;
         background-color: rgb(35, 48, 81);
@@ -90,13 +76,14 @@
         cursor: pointer;
         margin-left: 10px;
       }
-
       #searchButton:hover {
         background-color: rgb(25, 38, 71);
       }
-
-      .highlighted {
-        background-color: rgb(225, 255, 0);
+      .highlighted .building-info {
+        opacity: 1;
+        color: red;
+        background-color: rgb(255, 255, 0);
+        transform: scale(1.05);
       }
       body {
         overflow-x: hidden;
@@ -108,10 +95,9 @@
     <div class="panorama-container">
       <img
         src="./素材/照片/迎西全景.jpg"
-        alt="太原理工大学全景"
+        alt="迎西校区全景"
         class="panorama-image"
       />
-
       <!-- 建筑标记 -->
       <div
         class="building-marker"
@@ -247,8 +233,7 @@
         <span class="building-info">电机馆</span>
       </div>
     </div>
-
-    <!-- 搜索部分 -->
+    <!-- 搜索框 -->
     <div id="search-container">
       <div class="flex justify-center mt-24">
         <input
@@ -262,13 +247,11 @@
         </button>
       </div>
     </div>
-
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         const searchInput = document.getElementById("searchInput");
         const searchButton = document.getElementById("searchButton");
         const buildingMarkers = document.querySelectorAll(".building-marker");
-
         // 建筑名称映射表
         const buildingNames = {
           "admin-building": "行政楼",
@@ -291,20 +274,16 @@
           "si-xian-building": "思贤楼",
           "dian-ji-building": "电机馆",
         };
-
         // 搜索框点击事件
         searchButton.addEventListener("click", performSearch);
-
         // 回车键搜索
         searchInput.addEventListener("keyup", function (event) {
           if (event.key === "Enter") {
             performSearch();
           }
         });
-
         function performSearch() {
           const searchTerm = searchInput.value.trim();
-
           if (searchTerm === "") {
             // 清除所有高亮
             buildingMarkers.forEach((marker) => {
@@ -312,13 +291,12 @@
             });
             return;
           }
-
-          // 搜索框标记
+          // 搜索功能
           buildingMarkers.forEach((marker) => {
             const buildingId = marker.getAttribute("data-building-id");
             const buildingName = buildingNames[buildingId];
 
-            if (buildingName.includes(searchTerm)) {
+            if (buildingName === searchTerm) {
               marker.classList.add("highlighted");
             } else {
               marker.classList.remove("highlighted");
